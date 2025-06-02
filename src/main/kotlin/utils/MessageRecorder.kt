@@ -8,10 +8,7 @@ import net.mamoe.mirai.event.events.MessageEvent
 import net.mamoe.mirai.event.events.MessagePostSendEvent
 import net.mamoe.mirai.event.events.MessageRecallEvent
 import net.mamoe.mirai.event.events.source
-import net.mamoe.mirai.message.data.MessageChain
-import net.mamoe.mirai.message.data.MessageSource
-import net.mamoe.mirai.message.data.QuoteReply
-import net.mamoe.mirai.message.data.findIsInstance
+import net.mamoe.mirai.message.data.*
 
 internal object MessageRecorder : SimpleListenerHost() {
 
@@ -49,6 +46,7 @@ internal object MessageRecorder : SimpleListenerHost() {
 
     fun quoteMessage(event: MessageEvent): MessageChain? {
         val quote = event.message.findIsInstance<QuoteReply>() ?: return null
+        if (quote.source.originalMessage.contains(Image)) return quote.source.originalMessage
         val recordList = records[event.subject.id] ?: return null
         val sourceIds = quote.source.ids
         return recordList.asReversed().firstOrNull { rec -> rec.ids.any { it in sourceIds } }?.originalMessage

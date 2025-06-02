@@ -29,61 +29,59 @@ object CommandUpload : RawCommand(
         "${commandPrefix}upload <图片> [图片] [图片]...\n" +
         "${commandPrefix}upload <链接> [链接] [链接]...\n" +
         "\n" +
-        "【禁止内容】请勿上传：儿童色情内容、严重血腥内容、对未成年人的性暴力。允许NSFW图片，但只能私用，禁止添加至bot任何公共图库！\n" +
-        "日志会记录所有上传行为，如果您违反了上述任何被禁止的内容，一经发现将会被bot永久拉黑并禁止使用本bot所有功能！"
+        "【禁止内容】请勿上传：儿童色情内容、严重血腥内容、对未成年人的性暴力。"
 
     override suspend fun CommandSender.onCommand(args: MessageChain) {
         if (Config.API_Key.isEmpty()) {
             sendQuoteReply("请先在Config中填写API Key，可以在imgloc个人账号下找到")
             return
         }
-        // 先尝试引用获取图片
-        var quoteImage: Image? = null
-        if (this is CommandSenderOnMessage<*>) {
-            val image = fromEvent.message[QuoteReply.Key]
-                ?.let { quoteMessage(event = fromEvent) }
-                ?.firstIsInstanceOrNull<Image>()
+        // 尝试引用消息获取图片
+        if (this is CommandSenderOnMessage<*> && fromEvent.message[QuoteReply.Key] != null) {
+            val messages = quoteMessage(event = fromEvent)
+            // TODO 支持获取引用消息中的所有图片
+            val quoteImage = messages?.firstIsInstanceOrNull<Image>()
 
-            if (image == null) {
+            if (quoteImage == null) {
                 sendQuoteReply("[获取失败] 请回复一条近期包含图片的消息，或尝试保存图片后发图上传")
                 return
             }
-            quoteImage = image
-        }
-        if (quoteImage != null) {
+
             uploadLock.withLock {
                 val (success, result) = UploadImage.uploadImageFromUrlImgLoc(quoteImage.queryUrl(), subject)
                 sendQuoteReply(if (success) "[上传成功] 图片链接为：\n$result" else result)
             }
             return
         }
-        // 无引用遍历消息链
-        if (args.size == 0) {
-            sendQuoteReply(HELP)
-            return
-        }
+        // 无引用遍历消息链上传
         uploadLock.withLock {
             try {
-                var message = "【操作成功】上传结果如下："
-                var total = 0
+                val resultMessage = StringBuilder("【操作成功】上传结果如下：\n")
+                var totalCount = 0
                 var successCount = 0
+
                 for (arg in args) {
-                    val imageUrl = try {
-                        (arg as Image).queryUrl()
-                    } catch (e: ClassCastException) {
-                        if (!arg.content.startsWith("http")) {
-                            if (args.size == 1) message = HELP
-                            continue
+                    val imageUrl = when (arg) {
+                        is Image -> arg.queryUrl()
+                        else -> {
+                            val url = arg.content
+                            if (!url.startsWith("http")) continue
+                            url
                         }
-                        arg.content
                     }
+
                     val (success, result) = UploadImage.uploadImageFromUrlImgLoc(imageUrl, subject)
-                    message += "\n$result"
-                    total++
+                    resultMessage.appendLine(result)
+                    totalCount++
                     if (success) successCount++
                 }
-                message += "\n·上传总数：$total（成功：$successCount）"
-                sendQuoteReply(message)
+
+                if (totalCount > 0) {
+                    resultMessage.append("·上传总数：$totalCount（成功：$successCount）")
+                    sendQuoteReply(resultMessage.toString())
+                } else {
+                    sendQuoteReply(HELP)
+                }
             } catch (e: Exception) {
                 logger.warning(e)
                 sendQuoteReply("[发生未知错误] 请查看后台错误信息：${e::class.simpleName}(${e.message})")
