@@ -1,13 +1,13 @@
-package com.tiedan.command
+package command
 
-import com.tiedan.Config
-import com.tiedan.ImgLocUploader
-import com.tiedan.ImgLocUploader.HELP
-import com.tiedan.ImgLocUploader.logger
-import com.tiedan.ImgLocUploader.sendQuoteReply
-import com.tiedan.UploadData
-import com.tiedan.utils.ImglocAPI
-import com.tiedan.utils.MessageRecorder.quoteMessage
+import Config
+import ImgLocUploader
+import ImgLocUploader.HELP
+import ImgLocUploader.logger
+import ImgLocUploader.sendQuoteReply
+import UploadData
+import utils.ImglocAPI
+import utils.MessageRecorder.quoteMessage
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.mamoe.mirai.console.command.CommandSender

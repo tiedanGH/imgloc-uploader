@@ -1,8 +1,8 @@
-package com.tiedan.utils
+package utils
 
-import com.tiedan.Config
-import com.tiedan.ImgLocUploader.logger
-import com.tiedan.UploadData
+import Config
+import ImgLocUploader.logger
+import UploadData
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import utils.DownloadHelper.downloadFile

@@ -1,7 +1,6 @@
-package com.tiedan
-
-import com.tiedan.command.*
-import com.tiedan.utils.MessageRecorder
+import command.*
+import utils.MessageRecorder
+import command.CommandUpload
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.commandPrefix
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
@@ -18,7 +17,7 @@ import net.mamoe.mirai.utils.info
 object ImgLocUploader : KotlinPlugin(
     JvmPluginDescription(
         id = "com.tiedan.ImgLocUploader",
-        name = "imgloc-uploader",
+        name = "ImgLoc Uploader",
         version = "1.0.0",
     ) {
         author("tiedan")
@@ -44,7 +43,7 @@ object ImgLocUploader : KotlinPlugin(
         UploadData.reload()
         GlobalEventChannel.registerListenerHost(MessageRecorder)
         regCommand()
-        logger.info { "imgloc-uploader Plugin loaded!" }
+        logger.info { "ImgLoc Uploader Plugin loaded!" }
     }
 
     override fun onDisable() {

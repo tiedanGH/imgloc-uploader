@@ -1,6 +1,6 @@
-package com.tiedan.utils
+package utils
 
-import com.tiedan.Config
+import Config
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.SimpleListenerHost

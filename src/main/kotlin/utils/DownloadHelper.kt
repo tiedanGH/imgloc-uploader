@@ -1,9 +1,9 @@
 package utils
 
-import com.tiedan.Config
-import com.tiedan.ImgLocUploader.CONNECT_TIMEOUT
-import com.tiedan.ImgLocUploader.READ_TIMEOUT
-import com.tiedan.ImgLocUploader.logger
+import Config
+import ImgLocUploader.CONNECT_TIMEOUT
+import ImgLocUploader.READ_TIMEOUT
+import ImgLocUploader.logger
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
