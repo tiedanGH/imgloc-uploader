@@ -1,6 +1,6 @@
 package com.tiedan
 
-import com.tiedan.command.CommandUpload
+import com.tiedan.command.*
 import com.tiedan.utils.MessageRecorder
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
@@ -37,10 +37,12 @@ object ImgLocUploader : KotlinPlugin(
 
     override fun onDisable() {
         CommandUpload.unregister()
+        CommandDownload.unregister()
     }
 
     private fun regCommand() {
         CommandUpload.register()
+        CommandDownload.register()
     }
 
     suspend fun CommandSender.sendQuoteReply(msgToSend: String) {

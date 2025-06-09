@@ -3,6 +3,7 @@ package utils
 import com.tiedan.Config
 import com.tiedan.ImgLocUploader.CONNECT_TIMEOUT
 import com.tiedan.ImgLocUploader.READ_TIMEOUT
+import com.tiedan.ImgLocUploader.logger
 import java.io.File
 import java.io.FileOutputStream
 import java.net.HttpURLConnection
@@ -24,6 +25,7 @@ object DownloadHelper {
             var connection: HttpURLConnection? = null
 
             try {
+                logger.debug("执行下载文件：$fileUrl")
                 connection = URL(fileUrl).openConnection() as HttpURLConnection
                 connection.apply {
                     connectTimeout = CONNECT_TIMEOUT
@@ -62,6 +64,7 @@ object DownloadHelper {
             executor.shutdown()
         }
 
+        logger.debug(resultMsg)
         val success = !resultMsg.startsWith("[错误]")
         return DownloadResult(success, resultMsg)
     }
