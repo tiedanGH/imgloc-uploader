@@ -2,13 +2,14 @@ package com.tiedan.command
 
 import com.tiedan.Config
 import com.tiedan.ImgLocUploader
+import com.tiedan.ImgLocUploader.HELP
 import com.tiedan.ImgLocUploader.logger
 import com.tiedan.ImgLocUploader.sendQuoteReply
+import com.tiedan.UploadData
+import com.tiedan.utils.ImglocAPI
 import com.tiedan.utils.MessageRecorder.quoteMessage
-import com.tiedan.utils.UploadImage
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import net.mamoe.mirai.console.command.CommandManager.INSTANCE.commandPrefix
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.RawCommand
@@ -18,22 +19,18 @@ import net.mamoe.mirai.message.data.Image.Key.queryUrl
 object CommandUpload : RawCommand(
     owner = ImgLocUploader,
     primaryName = "upload",
-    secondaryNames = arrayOf("上传", "图床"),
+    secondaryNames = arrayOf("上传"),
     description = "上传图片至图床，获取图片链接"
 ) {
     private val uploadLock = Mutex()
-    private val HELP =
-        "\uD83D\uDDBC\uFE0F 本功能用于将自定义图片上传至图床。上传成功时，您将获得图片链接。\n" +
-        "使用 https://imgloc.com/ 提供的上传接口，使用方法如下：\n" +
-        "${commandPrefix}upload <引用一张图片>\n" +
-        "${commandPrefix}upload <图片> [图片] [图片]...\n" +
-        "${commandPrefix}upload <链接> [链接] [链接]...\n" +
-        "\n" +
-        "【禁止内容】请勿上传：儿童色情内容、严重血腥内容、对未成年人的性暴力。"
 
     override suspend fun CommandSender.onCommand(args: MessageChain) {
         if (Config.API_Key.isEmpty()) {
             sendQuoteReply("请先在Config中填写API Key，可以在imgloc个人账号下找到")
+            return
+        }
+        if (args.getOrNull(0)?.content in arrayOf("history", "历史")) {
+            sendQuoteReply(" · 近期上传历史：\n" + UploadData.history.joinToString("\n"))
             return
         }
         // 尝试引用消息获取图片
@@ -48,7 +45,7 @@ object CommandUpload : RawCommand(
             }
 
             uploadLock.withLock {
-                val (success, result) = UploadImage.uploadImageFromUrlImgLoc(quoteImage.queryUrl(), subject)
+                val (success, result) = ImglocAPI.uploadImageFromUrlImgLoc(quoteImage.queryUrl(), subject)
                 sendQuoteReply(if (success) "[上传成功] 图片链接为：\n$result" else result)
             }
             return
@@ -70,7 +67,7 @@ object CommandUpload : RawCommand(
                         }
                     }
 
-                    val (success, result) = UploadImage.uploadImageFromUrlImgLoc(imageUrl, subject)
+                    val (success, result) = ImglocAPI.uploadImageFromUrlImgLoc(imageUrl, subject)
                     resultMessage.appendLine(result)
                     totalCount++
                     if (success) successCount++

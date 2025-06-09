@@ -2,13 +2,14 @@ package com.tiedan.utils
 
 import com.tiedan.Config
 import com.tiedan.ImgLocUploader.logger
+import com.tiedan.UploadData
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import utils.DownloadHelper.downloadFile
 import java.io.File
 import java.util.concurrent.TimeUnit
 
-object UploadImage {
+object ImglocAPI {
     
     fun uploadImageFromUrlImgLoc(imageUrl: String, subject: Contact?): Pair<Boolean, String> {
         val fixedUrl = if (subject !is Group) {
@@ -57,7 +58,8 @@ object UploadImage {
             val url = regex.find(output)?.groupValues?.get(1)?.replace("\\/", "/")
 
             return if (url != null && url.startsWith("http")) {
-                // TODO 记录上传过的图片信息
+                UploadData.history.add(url)
+                if (UploadData.history.size > 20) UploadData.history.removeFirst()
                 true to url
             } else {
                 false to "[上传失败] 返回内容异常：$output"

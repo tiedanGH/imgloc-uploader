@@ -2,6 +2,7 @@ package com.tiedan
 
 import com.tiedan.command.*
 import com.tiedan.utils.MessageRecorder
+import net.mamoe.mirai.console.command.CommandManager.INSTANCE.commandPrefix
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.command.CommandSender
@@ -26,6 +27,17 @@ object ImgLocUploader : KotlinPlugin(
 ) {
     const val CONNECT_TIMEOUT = 10000
     const val READ_TIMEOUT = 10000
+    val HELP =
+        "🖼️ 本功能用于将自定义图片上传至图床。上传成功时，您将获得图片链接。\n" +
+        "使用 https://imgloc.com/ 提供的上传接口，使用方法如下：\n" +
+        "${commandPrefix}upload <引用图片>\n" +
+        "${commandPrefix}upload <图片> [图片] [图片]...\n" +
+        "${commandPrefix}upload <链接> [链接] [链接]...\n" +
+        "${commandPrefix}upload history\n" +
+        "⬇️ 通过图片链接下载并查看图片\n" +
+        "${commandPrefix}download <链接>\n" +
+        "\n" +
+        "【禁止内容】请勿上传：R18G图片或严重血腥内容"
 
     override fun onEnable() {
         Config.reload()
