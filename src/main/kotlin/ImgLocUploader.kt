@@ -18,7 +18,7 @@ object ImgLocUploader : KotlinPlugin(
     JvmPluginDescription(
         id = "com.tiedan.ImgLocUploader",
         name = "ImgLoc Uploader",
-        version = "1.0.0",
+        version = "1.0.1",
     ) {
         author("tiedan")
         info("""image upload plugin""")
