@@ -33,51 +33,51 @@ object CommandUpload : RawCommand(
             sendQuoteReply(" · 近期上传历史：\n" + UploadData.history.joinToString("\n"))
             return
         }
-        // 尝试引用消息获取图片
+        var messages: MessageChain = args
+        // 如果存在引用消息：改为获取其中的图片
         if (this is CommandSenderOnMessage<*> && fromEvent.message[QuoteReply.Key] != null) {
-            val messages = quoteMessage(event = fromEvent)
-            // TODO 支持获取引用消息中的所有图片
-            val quoteImage = messages?.firstIsInstanceOrNull<Image>()
+            messages = quoteMessage(event = fromEvent) ?: messageChainOf()
 
-            if (quoteImage == null) {
+            if (messages.contains(Image).not()) {
                 sendQuoteReply("[获取失败] 请回复一条近期包含图片的消息，或尝试保存图片后发图上传")
                 return
             }
-
-            uploadLock.withLock {
-                val (success, result) = ImglocAPI.uploadImageFromUrlImgLoc(quoteImage.queryUrl(), subject)
-                sendQuoteReply(if (success) "[上传成功] 图片链接为：\n$result" else result)
-            }
-            return
         }
-        // 无引用遍历消息链上传
+        // 遍历消息链上传
         uploadLock.withLock {
             try {
-                val resultMessage = StringBuilder("【操作成功】上传结果如下：\n")
                 var totalCount = 0
                 var successCount = 0
+                var lastSuccess = false
+                var lastResult = ""
 
-                for (arg in args) {
-                    val imageUrl = when (arg) {
-                        is Image -> arg.queryUrl()
-                        else -> {
-                            val url = arg.content
-                            if (!url.startsWith("http")) continue
-                            url
+                val multiResult = buildString {
+                    append("【操作成功】上传结果如下：\n")
+                    for (msg in messages) {
+                        val imageUrl = when (msg) {
+                            is Image -> msg.queryUrl()
+                            else -> {
+                                val url = msg.content
+                                if (!url.startsWith("http")) continue
+                                url
+                            }
                         }
-                    }
 
-                    val (success, result) = ImglocAPI.uploadImageFromUrlImgLoc(imageUrl, subject)
-                    resultMessage.appendLine(result)
-                    totalCount++
-                    if (success) successCount++
+                        val (success, result) = ImglocAPI.uploadImageFromUrlImgLoc(imageUrl, subject)
+                        appendLine(result)
+
+                        totalCount++
+                        if (success) successCount++
+                        lastSuccess = success
+                        lastResult = result
+                    }
+                    appendLine("·上传总数：$totalCount（成功：$successCount）")
                 }
 
-                if (totalCount > 0) {
-                    resultMessage.append("·上传总数：$totalCount（成功：$successCount）")
-                    sendQuoteReply(resultMessage.toString())
-                } else {
-                    sendQuoteReply(HELP)
+                when (totalCount) {
+                    0 -> sendQuoteReply(HELP)
+                    1 -> sendQuoteReply(if (lastSuccess) "【上传成功】图片链接为：\n$lastResult" else lastResult)
+                    else -> sendQuoteReply(multiResult)
                 }
             } catch (e: Exception) {
                 logger.warning(e)
