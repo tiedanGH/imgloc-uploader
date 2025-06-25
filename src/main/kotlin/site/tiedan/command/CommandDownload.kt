@@ -1,9 +1,8 @@
-package command
+package site.tiedan.command
 
-import ImgLocUploader
-import ImgLocUploader.HELP
-import ImgLocUploader.logger
-import ImgLocUploader.sendQuoteReply
+import site.tiedan.ImgLocUploader.HELP
+import site.tiedan.ImgLocUploader.logger
+import site.tiedan.ImgLocUploader.sendQuoteReply
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.mamoe.mirai.console.command.CommandSender
@@ -11,7 +10,8 @@ import net.mamoe.mirai.console.command.RawCommand
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import net.mamoe.mirai.message.data.MessageChain
 import net.mamoe.mirai.message.data.content
-import utils.DownloadHelper.downloadFile
+import site.tiedan.utils.DownloadHelper.downloadFile
+import site.tiedan.ImgLocUploader
 import java.io.File
 
 object CommandDownload : RawCommand(

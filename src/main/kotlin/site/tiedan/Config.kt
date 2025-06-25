@@ -1,4 +1,6 @@
-﻿import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
+﻿package site.tiedan
+
+import net.mamoe.mirai.console.data.ReadOnlyPluginConfig
 import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 

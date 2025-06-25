@@ -1,6 +1,5 @@
-import command.*
-import utils.MessageRecorder
-import command.CommandUpload
+package site.tiedan
+
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.commandPrefix
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
@@ -13,10 +12,13 @@ import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.QuoteReply
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.info
+import site.tiedan.command.CommandDownload
+import site.tiedan.command.CommandUpload
+import site.tiedan.utils.MessageRecorder
 
 object ImgLocUploader : KotlinPlugin(
     JvmPluginDescription(
-        id = "com.tiedan.ImgLocUploader",
+        id = "site.tiedan.ImgLocUploader",
         name = "ImgLoc Uploader",
         version = "1.0.1",
     ) {
@@ -39,21 +41,22 @@ object ImgLocUploader : KotlinPlugin(
         "【禁止内容】请勿上传：R18G图片或严重血腥内容"
 
     override fun onEnable() {
+        CommandUpload.register()
+        CommandDownload.register()
         Config.reload()
         UploadData.reload()
+
         GlobalEventChannel.registerListenerHost(MessageRecorder)
-        regCommand()
+
+        if (Config.API_Key.isEmpty())
+            logger.error("API Key为空，请先在Config中配置才能使用本插件，访问 https://imgloc.com/settings/api")
+
         logger.info { "ImgLoc Uploader Plugin loaded!" }
     }
 
     override fun onDisable() {
         CommandUpload.unregister()
         CommandDownload.unregister()
-    }
-
-    private fun regCommand() {
-        CommandUpload.register()
-        CommandDownload.register()
     }
 
     suspend fun CommandSender.sendQuoteReply(msgToSend: String) {

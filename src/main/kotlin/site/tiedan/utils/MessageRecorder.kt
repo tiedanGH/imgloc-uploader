@@ -1,6 +1,5 @@
-package utils
+package site.tiedan.utils
 
-import Config
 import net.mamoe.mirai.event.EventHandler
 import net.mamoe.mirai.event.EventPriority
 import net.mamoe.mirai.event.SimpleListenerHost
@@ -9,6 +8,7 @@ import net.mamoe.mirai.event.events.MessagePostSendEvent
 import net.mamoe.mirai.event.events.MessageRecallEvent
 import net.mamoe.mirai.event.events.source
 import net.mamoe.mirai.message.data.*
+import site.tiedan.Config
 
 internal object MessageRecorder : SimpleListenerHost() {
 

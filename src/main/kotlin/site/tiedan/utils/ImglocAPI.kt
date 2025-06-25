@@ -1,11 +1,11 @@
-package utils
+package site.tiedan.utils
 
-import Config
-import ImgLocUploader.logger
-import UploadData
+import site.tiedan.ImgLocUploader.logger
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
-import utils.DownloadHelper.downloadFile
+import site.tiedan.Config
+import site.tiedan.UploadData
+import site.tiedan.utils.DownloadHelper.downloadFile
 import java.io.File
 import java.util.concurrent.TimeUnit
 

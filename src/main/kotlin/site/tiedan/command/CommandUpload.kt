@@ -1,13 +1,9 @@
-package command
+package site.tiedan.command
 
-import Config
-import ImgLocUploader
-import ImgLocUploader.HELP
-import ImgLocUploader.logger
-import ImgLocUploader.sendQuoteReply
-import UploadData
-import utils.ImglocAPI
-import utils.MessageRecorder.quoteMessage
+import site.tiedan.ImgLocUploader.HELP
+import site.tiedan.ImgLocUploader.logger
+import site.tiedan.ImgLocUploader.sendQuoteReply
+import site.tiedan.utils.MessageRecorder.quoteMessage
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import net.mamoe.mirai.console.command.CommandSender
@@ -15,6 +11,10 @@ import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.RawCommand
 import net.mamoe.mirai.message.data.*
 import net.mamoe.mirai.message.data.Image.Key.queryUrl
+import site.tiedan.Config
+import site.tiedan.ImgLocUploader
+import site.tiedan.utils.ImglocAPI
+import site.tiedan.UploadData
 
 object CommandUpload : RawCommand(
     owner = ImgLocUploader,
