@@ -8,6 +8,6 @@ import net.mamoe.mirai.console.data.value
 internal object UploadData : AutoSavePluginData("UploadData") {
 
     @ValueDescription("近期上传历史")
-    var history: MutableList<String> by value()
+    var history: MutableList<Pair<String, String?>> by value()
 
 }

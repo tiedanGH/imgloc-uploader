@@ -1,9 +1,10 @@
 package site.tiedan.utils
 
-import site.tiedan.ImgLocUploader.logger
 import net.mamoe.mirai.contact.Contact
 import net.mamoe.mirai.contact.Group
 import site.tiedan.Config
+import site.tiedan.ImgLocUploader.logger
+import site.tiedan.ImgLocUploader.save
 import site.tiedan.UploadData
 import site.tiedan.utils.DownloadHelper.downloadFile
 import java.io.File
@@ -53,21 +54,39 @@ object ImglocAPI {
                 return false to "[上传失败] 返回内容为空"
             }
 
-            // TODO 获取删除图片需要的URL
-            val regex = """"url"\s*:\s*"([^"]+)"""".toRegex()
-            val url = regex.find(output)?.groupValues?.get(1)?.replace("\\/", "/")
+            val urlRegex = """"url"\s*:\s*"([^"]+)"""".toRegex()
+            val url = urlRegex.find(output)?.groupValues?.get(1)?.replace("\\/", "/") ?: ""
+            val deleteUrlRegex = """"delete_url"\s*:\s*"([^"]+)"""".toRegex()
+            val deleteUrl = deleteUrlRegex.find(output)?.groupValues?.get(1)?.replace("\\/", "/")
 
-            return if (url != null && url.startsWith("http")) {
-                UploadData.history.add(url)
-                if (UploadData.history.size > 20) UploadData.history.removeFirst()
+            return if (url.startsWith("http")) {
+                UploadData.history.add(0, url to deleteUrl)
+                UploadData.save()
                 true to url
             } else {
                 false to "[上传失败] 返回内容异常：$output"
             }
         } catch (e: Exception) {
-            return Pair(false, "[上传失败] 请求发生错误：${e.message}")
+            return false to "[上传失败] 请求发生错误：${e.message}"
         } finally {
             tempFile.delete()
         }
+    }
+
+    fun deleteImageFromUrlImgLoc(deleteUrl: String): Pair<Boolean, String> {
+        logger.info("Deleting image: $deleteUrl")
+
+        val processBuilder = ProcessBuilder(
+            "curl", "-X", "POST", deleteUrl
+        )
+
+        processBuilder.redirectErrorStream(true)
+        val process = processBuilder.start()
+        if (!process.waitFor(Config.timeout, TimeUnit.SECONDS)) {
+            process.destroyForcibly()
+            return false to "[请求超时] ${Config.timeout}秒内未返回结果"
+        }
+
+        return true to "删除成功"
     }
 }

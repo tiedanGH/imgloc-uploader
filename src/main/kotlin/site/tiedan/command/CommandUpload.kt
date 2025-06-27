@@ -30,7 +30,9 @@ object CommandUpload : RawCommand(
             return
         }
         if (args.getOrNull(0)?.content in arrayOf("history", "历史")) {
-            sendQuoteReply(" · 近期上传历史：\n" + UploadData.history.joinToString("\n"))
+            sendQuoteReply(" · 近期上传历史：\n" +
+                    UploadData.history.take(15).joinToString("\n") { it.first }
+            )
             return
         }
         var messages: MessageChain = args

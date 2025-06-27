@@ -12,6 +12,7 @@ import net.mamoe.mirai.message.data.PlainText
 import net.mamoe.mirai.message.data.QuoteReply
 import net.mamoe.mirai.message.data.buildMessageChain
 import net.mamoe.mirai.utils.info
+import site.tiedan.command.CommandDelete
 import site.tiedan.command.CommandDownload
 import site.tiedan.command.CommandUpload
 import site.tiedan.utils.MessageRecorder
@@ -35,6 +36,8 @@ object ImgLocUploader : KotlinPlugin(
         "${commandPrefix}upload <图片> [图片] [图片]...\n" +
         "${commandPrefix}upload <链接> [链接] [链接]...\n" +
         "${commandPrefix}upload history\n" +
+        "🗑️ 删除已上传的图片\n" +
+        "${commandPrefix}delete <图片ID(如：jXUdp)>\n" +
         "⬇️ 通过图片链接下载并查看图片\n" +
         "${commandPrefix}download <链接>\n" +
         "\n" +
@@ -43,6 +46,7 @@ object ImgLocUploader : KotlinPlugin(
     override fun onEnable() {
         CommandUpload.register()
         CommandDownload.register()
+        CommandDelete.register()
         Config.reload()
         UploadData.reload()
 
@@ -57,6 +61,7 @@ object ImgLocUploader : KotlinPlugin(
     override fun onDisable() {
         CommandUpload.unregister()
         CommandDownload.unregister()
+        CommandDelete.unregister()
     }
 
     suspend fun CommandSender.sendQuoteReply(msgToSend: String) {
