@@ -31,7 +31,6 @@ object ImglocAPI {
 
             val command = listOf(
                 "curl",
-                "--fail-with-body",
                 "-s",
                 "-X", "POST",
                 "-H", "X-API-Key: ${Config.API_Key}",
