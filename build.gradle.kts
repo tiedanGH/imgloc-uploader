@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "site.tiedan"
-version = "v1.1.0"
+version = "v1.1.1"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public")
